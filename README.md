@@ -35,13 +35,16 @@ If we don't use aliases the column will be called "count" by default. Notice tha
 # AVG()
 
  When exploring the database I noticed that only specific countries have regions assigned to them:
-    -- select countries which regions are included in database
-    SELECT DISTINCT country FROM customers;
+ 
+	-- select countries which regions are included in database
+	SELECT DISTINCT country FROM customers;
 
 So I did a simple query to see which countries do have regions assigned to them, using IS NOT NULL condition:
+    
     SELECT DISTINCT country FROM customers WHERE region IS NOT null;
 
 For practice, I decided to count average number of regions per country, including only countries that have regions assigned to them in the database:
+    
     --Countries with the most and the least orders shipped to
     WITH COUNTRY_REGIONS AS
     (SELECT COUNTRY,
@@ -63,6 +66,7 @@ More complex query using Common Table Explression (lines 1-6)
 # MIN() and MAX()
 
 I decided to do more complex query for MIN() and MAX() Aggregate Functions. I wanted to create query that would return all countries which have either minimum or maximum number of orders in database:
+    
     WITH COUNTRY_ORDERS AS
     (SELECT SHIP_COUNTRY,
 			COUNT(*) AS NUMBER_OF_ORDERS
@@ -84,9 +88,9 @@ Notice that the main query (line 15) returns all rows which number of orders is 
 # RANK()
 Let's stay with number of orders per country. We can use RANK() function to return ranking of countries of customers with most orders:
 
-    -- Ranking of contries with most orders.
--- Ranking of contries with most orders.
-    WITH ORDERS_COUNT AS
+
+	-- Ranking of contries with most orders.
+	WITH ORDERS_COUNT AS
     	(SELECT C.COUNTRY,COUNT(*) AS NUMBER_OF_ORDERS
     		FROM ORDERS O
     		INNER JOIN CUSTOMERS C ON O.CUSTOMER_ID = C.CUSTOMER_ID
@@ -105,25 +109,30 @@ Let's stay with number of orders per country. We can use RANK() function to retu
 I used IS NULL as a part of previous queries, but let's do one, last example.
 
 This query returns rows with any NULL values: 
+
     SELECT * FROM customers WHERE NOT (customers is not null);
     
 Let's select all columns but the "region" column
+
     WITH customers_without_regions AS
     (
     SELECT customer_id, company_name, contact_name, contact_title, address, city, postal_code, country, phone, fax
     FROM customers
     )
     SELECT * FROM customers_without_regions where NOT (customers_without_regions is not null);
+    
 Simple use of CTE gives us good base for next queries.
 
 
-WITH customers_without_regions AS
-(
-SELECT customer_id, company_name, contact_name, contact_title, address, city, postal_code, country, phone, fax
-FROM customers
-)
-
 Let's show the companies with missing info in fax and postal_code columns:
+
+	WITH customers_without_regions AS
+	(
+	SELECT customer_id, company_name, contact_name, contact_title, address, city, postal_code, country, phone, fax
+	FROM customers
+	)
+
+
     SELECT company_name, country, 'no postal_code' AS missing_info FROM customers_without_regions WHERE postal_code IS null
     UNION
     SELECT company_name, country, 'no fax' AS missing_info FROM customers_without_regions WHERE fax IS null
