@@ -20,8 +20,8 @@ Today we'll focus on two tables from the database, customers and orders.
 - RANK() function
 - IS NULL operator
 
-#Aggregate Functions
-#Count()
+
+# Count()
 
 Let's start with simple query that will show us the number of customers. 
 
